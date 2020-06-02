@@ -22,7 +22,7 @@ const chalk = require('chalk')
 	const contactPath =
 		'#section-overview > mat-card > div.section-layout-content > fields-card:nth-child(4) > div > span'
 
-	let founders = []
+	let objectResult = {}
 
 	await puppeteer.defaultArgs(['--disable-web-security'])
 	const browser = await puppeteer.launch({ headless: false })
@@ -42,9 +42,9 @@ const chalk = require('chalk')
 		let name = await page.evaluate((x) => {
 			return x.innerText
 		}, companyHolder)
-		founders.push('COMPANY : ' + name)
-		founders.push('')
 
+		objectResult['company'] = name
+		objectResult['founders'] = []
 		/*   FIND FOUNDER   */
 		const founderHolder = await page.$$(founderPath)
 		for (const founder of founderHolder) {
@@ -58,52 +58,24 @@ const chalk = require('chalk')
 
 			/*   GET FOUNDER NAME & TITLE  */
 			let name = await newTab.$eval(selectorPath, (span) => span.innerText)
-			founders.push('')
-			founders.push(`FOUNDER : ${name}`)
-			let formatter = '================'
-			for (let i = 0; i < name.length; i++) {
-				i++
-				formatter += '='
-			}
-			founders.push(formatter)
-
-			/* THE COMMENTED CODE BELOW IS IN PROGRESS AS WELL AS OPTIONAL */
-
-			// let companyName = async () => {
-			// 	;(await newTab.$eval(currentlyWorksHere, (div) => div.innerHTML)) ||
-			// 		null
-			// }
-			// if (companyName === name) {
-			// 	let title = await newTab.$eval(
-			// 		founderTitlePath,
-			// 		(span) => span.innerHTML
-			// 	)
-			// 	founders.push('====')
-			// 	founders.push(`//CURRENT//${title} : ${name}`)
-			// } else {
-			// 	let notAtCompany = await newTab.$$(previousTitle)
-			// 	for (let i = 0; i < notAtCompany.length; i++) {
-			// 		if (await notAtCompany[i].$(name)) {
-			// 			let formerTitle = await notAtCompany[i + 1].$('span[title]')
-			// founders.push('====')
-			// founders.push(`//FORMER//${formerTitle} : ${name}`)
-			// 		}
-			// 	}
-			// }
-
 			await newTabNavigationPromise
-
 			/*   GET SOCIAL MEDIA LINKS   */
 			let socialMedia = await newTab.$$(contactPath)
+			let linkList = []
 			for (const links of socialMedia) {
 				const link = await links.$('a')
 				if (link) {
+					const websiteName = await link.evaluate((x) =>
+						x.getAttribute('title')
+					)
 					const websiteLink = await link.evaluate((x) => x.getAttribute('href'))
-					founders.push(websiteLink)
+					const websiteNameClean = websiteName.replace('View on ', '')
+					linkList.push({ [websiteNameClean]: websiteLink })
 				}
 			}
+			objectResult.founders.push({ name, links: linkList })
 		}
-		await console.log(founders)
+		console.log(objectResult)
 		// await newTab.close()
 		// await page.close()
 		// await browser.close()
@@ -125,18 +97,3 @@ const chalk = require('chalk')
 // }, navigatePage)
 // await linkArr.push(link)
 // await console.log(linkArr)
-
-// V-- GETS PROPPER SELECTORS FOR FOUNDERS AND THEIR SOCIAL MEDIA LINKS
-
-// 		await page.waitForSelector(
-// 			'.field-value:nth-child(8) > field-formatter > .ng-star-inserted > .component--field-formatter > .link-primary:nth-child(1)'
-// 		)
-// 		await page.click(
-// 			'.field-value:nth-child(8) > field-formatter > .ng-star-inserted > .component--field-formatter > .link-primary:nth-child(1)'
-// 		)
-// 		await page.waitForSelector(
-// 			'.layout-wrap > .field-value:nth-child(2) > field-formatter > .ng-star-inserted > .link-primary'
-// 		)
-// 		await page.click(
-// 			'.layout-wrap > .field-value:nth-child(2) > field-formatter > .ng-star-inserted > .link-primary'
-// 		)
