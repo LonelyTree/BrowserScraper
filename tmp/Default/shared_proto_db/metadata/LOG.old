@@ -1,0 +1,4 @@
+2020/06/08-17:39:16.392 11303 Reusing MANIFEST /Users/alexhughes/WebProjects/Freelance/crunchbase_puppeteer/tmp/Default/shared_proto_db/metadata/MANIFEST-000001
+2020/06/08-17:39:16.392 11303 Recovering log #3
+2020/06/08-17:39:16.392 11303 (ignoring error) /Users/alexhughes/WebProjects/Freelance/crunchbase_puppeteer/tmp/Default/shared_proto_db/metadata/000003.log: dropping 26637 bytes; Corruption: checksum mismatch
+2020/06/08-17:39:16.392 11303 Reusing old log /Users/alexhughes/WebProjects/Freelance/crunchbase_puppeteer/tmp/Default/shared_proto_db/metadata/000003.log 
